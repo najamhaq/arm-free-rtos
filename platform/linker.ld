@@ -19,14 +19,21 @@ SECTIONS
     *(.rodata*)
   } > FLASH
 
-  .data : AT (ADDR(.text) + SIZEOF(.text))
-  {
-    *(.data*)
-  } > RAM
+    .data : AT (ADDR(.text) + SIZEOF(.text))
+    {
+      _sdata = .;         /* start of .data in RAM */
+      *(.data*)
+      _edata = .;         /* end of .data in RAM */
+    } > RAM
+
+    /* Start address of init values for .data in FLASH */
+    _sidata = LOADADDR(.data);
 
   .bss :
   {
+    _sbss = .;
     *(.bss*)
     *(COMMON)
+    _ebss = .;
   } > RAM
 }

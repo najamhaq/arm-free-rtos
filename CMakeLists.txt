@@ -62,21 +62,34 @@ if(BUILD_FIRMWARE)
     add_executable(${ELF_TARGET}
             platform/startup.s
             platform/linker.ld
-
-            # ---- Platform / bare-metal sources (today) ----
+            platform/handlers.c
+            platform/LEDMatrix.cpp
+            platform/mem.c
             app/main.cpp
 
-            # ---- Future RTOS structure (add later) ----
-            # platform/...
-            # rtos/...
-            # app/...
+            # --- Your RTOS integration ---
+            rtos/hooks.c
+            rtos/heap_4.c
+
+            # --- FreeRTOS Kernel (from submodule) ---
+            third_party/freertos-kernel/list.c
+            third_party/freertos-kernel/queue.c
+            third_party/freertos-kernel/tasks.c
+            third_party/freertos-kernel/timers.c
+            third_party/freertos-kernel/event_groups.c
+            third_party/freertos-kernel/stream_buffer.c
+
+            # --- Cortex-M4F port ---
+            third_party/freertos-kernel/portable/GCC/ARM_CM4F/port.c
     )
 
     target_include_directories(${ELF_TARGET} PRIVATE
             include
-            # platform/include
-            # rtos/include
-            # app/include
+            platform/include
+            rtos/include
+            app/include
+            third_party/freertos-kernel/include
+            third_party/freertos-kernel/portable/GCC/ARM_CM4F
     )
 
     mb2_apply_firmware_flags(${ELF_TARGET})
