@@ -143,25 +143,20 @@ if(BUILD_TESTS AND NOT CMAKE_CROSSCOMPILING)
             third_party/unity/src
     )
 
-    add_executable(test_queue
-            tests/test_queue.cpp
-            src/queue.cpp
-            src/message.cpp
-
-            include/irq.h
-            src/irq_host.c   # NOTE: fixed filename (you had irq_host..c)
+    add_executable(unit_tests
+            tests/test_main.c
     )
 
-    target_include_directories(test_queue PRIVATE
+    target_include_directories(unit_tests PRIVATE
             include
             third_party/unity/src
     )
 
-    target_link_libraries(test_queue PRIVATE unity)
-    target_compile_options(test_queue PRIVATE -g -O0)
-    target_compile_definitions(test_queue PRIVATE UNIT_TESTING=1)
+    target_link_libraries(unit_tests PRIVATE unity)
+    target_compile_options(unit_tests PRIVATE -g -O0)
+    target_compile_definitions(unit_tests PRIVATE UNIT_TESTING=1)
 
-    add_test(NAME test_queue COMMAND test_queue)
+    add_test(NAME unit_tests COMMAND unit_tests)
 
 endif()
 

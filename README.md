@@ -139,6 +139,14 @@ Terminal B:
 arm-none-eabi-gdb build/firmware.elf
 ```
 
+### Build and Run Host Unit Tests
+
+```bash
+cmake -S . -B build-host -G Ninja -DBUILD_FIRMWARE=OFF -DBUILD_TESTS=ON
+cmake --build build-host
+ctest --test-dir build-host --output-on-failure
+```
+
 ---
 
 ## Project Structure
