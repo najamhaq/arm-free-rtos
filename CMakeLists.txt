@@ -47,7 +47,7 @@ function(mb2_apply_firmware_flags tgt)
             -nostdlib
             -Wl,--gc-sections
             -Wl,-Map=${CMAKE_BINARY_DIR}/${TARGET_NAME}.map
-            -T ${CMAKE_SOURCE_DIR}/linker.ld
+            -T ${CMAKE_SOURCE_DIR}/platform/linker.ld
 
             # Release ELF is stripped (keeps Debug ELF debuggable)
             $<$<CONFIG:Release>:-Wl,--strip-debug>
@@ -60,11 +60,11 @@ endfunction()
 if(BUILD_FIRMWARE)
 
     add_executable(${ELF_TARGET}
-            startup.s
-            linker.ld
+            platform/startup.s
+            platform/linker.ld
 
             # ---- Platform / bare-metal sources (today) ----
-            main.cpp
+            app/main.cpp
 
             # ---- Future RTOS structure (add later) ----
             # platform/...
@@ -102,9 +102,11 @@ if(BUILD_FIRMWARE)
     # ----------------------------
     # Deploy (pyOCD)
     # ----------------------------
+    # Use the Windows Python launcher so deploy/debug works from PowerShell, Git Bash, MSYS2, CLion
+    find_program(PY_LAUNCHER py REQUIRED)
     add_custom_target(deploy
-            COMMAND pyocd flash --target nrf52833 --erase sector $<TARGET_FILE:${ELF_TARGET}>
-            COMMAND pyocd reset --target nrf52833
+            COMMAND ${PY_LAUNCHER} -m pyocd flash --target nrf52833 --erase sector $<TARGET_FILE:${ELF_TARGET}>
+            COMMAND ${PY_LAUNCHER} -m pyocd reset --target nrf52833
             DEPENDS ${ELF_TARGET}
             USES_TERMINAL
             VERBATIM
@@ -114,7 +116,7 @@ if(BUILD_FIRMWARE)
     # Debug server (pyOCD gdbserver)
     # ----------------------------
     add_custom_target(debugserver
-            COMMAND pyocd gdbserver
+            COMMAND ${PY_LAUNCHER} -m pyocd gdbserver
             --target nrf52833
             --port 3333
             --telnet-port 4444
