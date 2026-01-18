@@ -28,8 +28,6 @@ The micro:bit is used strictly as a **carrier board**. All work targets the MCU 
 
 ## Project Roadmap (Incremental, Commit-Driven)
 
-This repository is intentionally built **in stages**, each corresponding to a clean commit boundary.
-
 ### Phase 1 — Tooling & Build Foundation
 
 * Command-line build only (no IDE dependency)
@@ -39,12 +37,12 @@ This repository is intentionally built **in stages**, each corresponding to a cl
 
 ### Phase 2 — Unified CMake Build System
 
-Single CMake project capable of:
+* Single CMake project supporting:
 
-* Building **host-based unit tests**
-* Building **ARM firmware** (Debug / Release)
-* Launching **GDB debug sessions**
-* Flashing firmware to the micro:bit
+    * Host-based unit tests
+    * ARM firmware builds
+    * Debug targets
+    * Flash / deploy targets
 
 ### Phase 3 — FreeRTOS Integration
 
@@ -58,7 +56,7 @@ Single CMake project capable of:
 
 * Task-based application design
 * Deterministic scheduling
-* ISR → task communication (queues / notifications)
+* ISR → task communication
 * Real-time timing guarantees
 
 ---
@@ -83,46 +81,96 @@ This mirrors how **production firmware teams** introduce RTOSes in safety-critic
 
 * CMake ≥ 3.22
 * Ninja (recommended)
-* GCC / Clang (for host unit tests)
+* GCC or Clang (for host unit tests)
+* Git (with submodule support)
 
 ### ARM Toolchain
 
 * GNU Arm Embedded Toolchain (`arm-none-eabi-gcc`)
 * pyOCD
-* GDB (arm-none-eabi-gdb)
+* GDB (`arm-none-eabi-gdb`)
+
+### Unit Testing Framework
+
+* **Unity** (ThrowTheSwitch)
+
+    * Added as a **git submodule** under `third_party/unity`
+    * Used for fast, deterministic **host-based unit testing** of embedded logic
+
+> After cloning the repository, initialize dependencies with:
+>
+> ```bash
+> git submodule update --init --recursive
+> ```
 
 ---
 
 ## Build Instructions (Command Line)
 
-### 1. Configure
+### Configure
 
 ```bash
-cmake -S . -B build \
-  -G Ninja \
-  -DCMAKE_TOOLCHAIN_FILE=arm-gcc-toolchain.cmake
+cmake -S . -B build -G Ninja -DCMAKE_TOOLCHAIN_FILE=arm-gcc-toolchain.cmake
 ```
 
-### 2. Build Firmware
+### Build Firmware
 
 ```bash
 cmake --build build
 ```
 
-### 3. Flash to micro:bit
+### Flash to micro:bit
 
 ```bash
-pyocd flash build/firmware.hex
+cmake --build build --target deploy
 ```
 
-### 4. Debug
+### Debug
+
+Terminal A:
 
 ```bash
-pyocd gdbserver --target nrf52833
+cmake --build build --target debugserver
 ```
 
-In another terminal:
+Terminal B:
 
 ```bash
 arm-none-eabi-gdb build/firmware.elf
 ```
+
+---
+
+## Project Structure
+
+```
+.
+├── CMakeLists.txt
+├── arm-gcc-toolchain.cmake
+├── platform/
+├── rtos/
+├── app/
+├── tests/
+├── third_party/unity/
+├── startup.s
+├── linker.ld
+└── README.md
+```
+
+---
+
+## What This Repository Demonstrates
+
+* ARM Cortex-M reset and startup flow
+* NVIC and interrupt priority management
+* FreeRTOS kernel bring-up
+* ISR-safe queue and notification usage
+* Deterministic task scheduling
+* Host-based unit testing for embedded logic
+* Professional CMake-based firmware builds
+
+---
+
+## License
+
+Educational and demonstrational use only.
