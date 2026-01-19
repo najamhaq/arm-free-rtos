@@ -54,6 +54,32 @@ function(mb2_apply_firmware_flags tgt)
     )
 endfunction()
 
+
+# ====================
+# formating
+# ====================
+find_program(CLANG_FORMAT clang-format)
+
+add_custom_target(format
+        COMMAND ${CLANG_FORMAT} -i
+        ${PROJECT_SOURCE_DIR}/app/*.cpp
+        ${PROJECT_SOURCE_DIR}/app/*.h
+        ${PROJECT_SOURCE_DIR}/platform/*.cpp
+        ${PROJECT_SOURCE_DIR}/platform/*.h
+        COMMENT "Running clang-format"
+)
+
+add_custom_target(format-check
+        COMMAND ${CLANG_FORMAT} --dry-run --Werror
+        ${PROJECT_SOURCE_DIR}/app/*.cpp
+        ${PROJECT_SOURCE_DIR}/app/*.h
+        ${PROJECT_SOURCE_DIR}/platform/*.cpp
+        ${PROJECT_SOURCE_DIR}/platform/*.h
+        COMMENT "Checking clang-format (fails on diff)"
+)
+
+
+
 # =====================================================================
 # Firmware (ARM)
 # =====================================================================

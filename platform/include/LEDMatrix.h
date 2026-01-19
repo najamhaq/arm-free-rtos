@@ -1,6 +1,7 @@
 //
 // Created by mnajm on 2026-01-19.
 //
+// @formatter:on
 
 #ifndef MB2_FREERTOS_LEDMATRIC_H
 #define MB2_FREERTOS_LEDMATRIC_H
@@ -69,18 +70,15 @@ private:
   static void set_high(gpio_t gpio) {
 	  if (gpio.port == 0) {
   	  P0_OUTSET = BIT(gpio.pin);
-    	return;
-	  }
-  	P1_OUTSET = BIT(gpio.pin);
+    	return;	  } P1_OUTSET = BIT(gpio.pin);
 	}
 
 	static void set_low(gpio_t gpio) {
-	  if (gpio.port == 0)
-  	{
-    	P0_OUTCLR = BIT(gpio.pin);
-	    return;
-  	}
-	  P1_OUTCLR = BIT(gpio.pin);
+		if (gpio.port == 0) {
+    		P0_OUTCLR = BIT(gpio.pin);
+	    	return;
+  		}
+		P1_OUTCLR = BIT(gpio.pin);
 	}
 };
 
