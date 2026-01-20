@@ -1,17 +1,15 @@
 extern "C" {
 #include "FreeRTOS.h"
-#include "task.h"
-#include "mb2_board.h"
 #include "LEDMatrix.h"
+#include "mb2_board.h"
+#include "task.h"
 }
 
-void setup() {
-  LEDMatrix::init();
-}
+void setup() { LEDMatrix::init(); }
 
-static void BlinkTask(void *) {
+static void BlinkTask(void*) {
   for (;;) {
-    __asm volatile ("nop");
+    __asm volatile("nop");
     vTaskDelay(pdMS_TO_TICKS(500));
     LEDMatrix::led_on(3, 3);
     vTaskDelay(pdMS_TO_TICKS(500));
@@ -26,6 +24,6 @@ extern "C" int main(void) {
 
   // If we get here, scheduler failed (heap/stack)
   for (;;) {
-    __asm volatile ("nop");
+    __asm volatile("nop");
   }
 }

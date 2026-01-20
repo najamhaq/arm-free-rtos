@@ -13,3 +13,5 @@
 
 *.bat           text eol=crlf
 *.ps1           text eol=crlf
+
+.githooks/*     text eol=lf

@@ -97,6 +97,15 @@ This mirrors how **production firmware teams** introduce RTOSes in safety-critic
     * Added as a **git submodule** under `third_party/unity`
     * Used for fast, deterministic **host-based unit testing** of embedded logic
 
+## Git Config  
+After cloning:
+
+Ensure you have clang-format . Pre Commit hooks rely on this
+
+ ```bash
+git config core.hooksPath .githooks  # (required)
+git config --global core.autocrlf true  #(optional)
+````
 > After cloning the repository, initialize dependencies with:
 >
 > ```bash
@@ -167,12 +176,13 @@ ctest --test-dir build-host --output-on-failure
 ├── CMakeLists.txt
 ├── arm-gcc-toolchain.cmake
 ├── platform/
+    ├── startup.s
+    ├── linker.ld
 ├── rtos/
 ├── app/
+    ├── main.cpp
 ├── tests/
 ├── third_party/unity/
-├── startup.s
-├── linker.ld
 └── README.md
 ```
 
