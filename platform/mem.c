@@ -4,11 +4,10 @@
 #include <stddef.h>
 #include <stdint.h>
 
-void *memset(void *dst, int c, size_t n)
-{
-  uint8_t *p = (uint8_t *)dst;
+void *memset(void *dst, int c, size_t n) {
+  uint8_t *p = (uint8_t *) dst;
   while (n--) {
-    *p++ = (uint8_t)c;
+    *p++ = (uint8_t) c;
   }
   return dst;
 }

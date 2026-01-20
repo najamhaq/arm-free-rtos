@@ -16,20 +16,15 @@
 #define P0_DIRSET (*(volatile uint32_t *)(GPIO_0_BASE + 0x518))
 #define P1_DIRSET (*(volatile uint32_t *)(GPIO_1_BASE + 0x518))  // 0x50000300 + 0x518 = 0x50000818
 
-
-
 #define P0_OUTSET (*(volatile uint32_t *)(GPIO_0_BASE + 0x508))
 #define P0_OUTCLR (*(volatile uint32_t *)(GPIO_0_BASE + 0x50C))
 #define P1_OUTSET (*(volatile uint32_t *)(GPIO_1_BASE + 0x508))
 #define P1_OUTCLR (*(volatile uint32_t *)(GPIO_1_BASE + 0x50C))
 
-
-
 static inline uint32_t BIT(uint32_t pin) { return (1u << (pin)); }
 
 // Some pins are not one the sam eport. Define a struct to represent a GPIO pin.
-typedef struct
-{
+typedef struct {
   uint8_t port; // 0 or 1
   uint8_t pin; // 0..31 (port0) or 0..15 (port1)
 } gpio_t;

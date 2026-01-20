@@ -32,12 +32,11 @@
  */
 
 static const gpio_t col_pins[5] = {
-  {0, 28}, {0, 11}, {0, 31}, {1, 5}, {0, 30}
+    {0, 28}, {0, 11}, {0, 31}, {1, 5}, {0, 30}
 };
 static const gpio_t row_pins[5] = {
-  {0, 21}, {0, 22}, {0, 15}, {0, 24}, {0, 19}
+    {0, 21}, {0, 22}, {0, 15}, {0, 24}, {0, 19}
 };
-
 
 class LEDMatrix {
 public:
@@ -46,41 +45,42 @@ public:
 //   static void scanStep();    // called periodically (2ms)
 
   static void init() {
-  	// Configure row + columns as outputs
+    // Configure row + columns as outputs
     // make sure we dont set anything else as output by accident and only set LED matrix pins
-	  P0_DIRSET = LED_P0_MASK; // All GPIO on Port 0 as outputs
-	  P1_DIRSET = LED_P1_MASK; // Port 1: make P1.05 an output
+    P0_DIRSET = LED_P0_MASK; // All GPIO on Port 0 as outputs
+    P1_DIRSET = LED_P1_MASK; // Port 1: make P1.05 an output
     // turn off everything
-  	for (int i = 0; i < 5; i++) {
-	    set_high(col_pins[i]); // Default HIGH (OFF)
-  	  set_low(row_pins[i]); // Default LOW (OFF)
-	  }
-	}
+    for (int i = 0; i < 5; i++) {
+      set_high(col_pins[i]); // Default HIGH (OFF)
+      set_low(row_pins[i]); // Default LOW (OFF)
+    }
+  }
 
-	static void led_on(uint32_t row, uint32_t col) {
-	  set_low(col_pins[col]); // Turn it ON
-  	set_high(row_pins[row]); // Turn it ON
-	}
-	static void led_off(uint32_t row, uint32_t col) {
-	  set_high(col_pins[col]); // Turn it OFF
-  	set_high(row_pins[row]); // Turn it OFF
-	}
+  static void led_on(uint32_t row, uint32_t col) {
+    set_low(col_pins[col]); // Turn it ON
+    set_high(row_pins[row]); // Turn it ON
+  }
+  static void led_off(uint32_t row, uint32_t col) {
+    set_high(col_pins[col]); // Turn it OFF
+    set_high(row_pins[row]); // Turn it OFF
+  }
 
 private:
   static void set_high(gpio_t gpio) {
-	  if (gpio.port == 0) {
-  	  P0_OUTSET = BIT(gpio.pin);
-    	return;	  } P1_OUTSET = BIT(gpio.pin);
-	}
+    if (gpio.port == 0) {
+      P0_OUTSET = BIT(gpio.pin);
+      return;
+    }
+    P1_OUTSET = BIT(gpio.pin);
+  }
 
-	static void set_low(gpio_t gpio) {
-		if (gpio.port == 0) {
-    		P0_OUTCLR = BIT(gpio.pin);
-	    	return;
-  		}
-		P1_OUTCLR = BIT(gpio.pin);
-	}
+  static void set_low(gpio_t gpio) {
+    if (gpio.port == 0) {
+      P0_OUTCLR = BIT(gpio.pin);
+      return;
+    }
+    P1_OUTCLR = BIT(gpio.pin);
+  }
 };
-
 
 #endif //MB2_FREERTOS_LEDMATRIC_H
