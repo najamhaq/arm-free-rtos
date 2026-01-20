@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -e
+
+FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(c|cc|cpp|cxx|h|hpp)$' || true)
+[ -z "$FILES" ] && exit 0
+
+echo "Running clang-format on staged files..."
+echo "$FILES" | xargs -n 50 clang-format -i
+
+# re-stage
+echo "$FILES" | xargs -n 50 git add
