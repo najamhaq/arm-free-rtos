@@ -107,6 +107,17 @@ This mirrors how **production firmware teams** introduce RTOSes in safety-critic
 
 ## Build Instructions (Command Line)
 
+
+## Build & Debug
+
+```bash
+./dev configure
+./dev build
+./dev debugserver
+
+```
+Alternatively 
+
 ### Configure
 
 ```bash

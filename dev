@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Always run from repo root, even if invoked elsewhere
+ROOT="$(cd "$(dirname "$0")" && pwd)"
+cd "$ROOT"
+
+BUILD_DIR="${BUILD_DIR:-build}"
+
+case "${1:-}" in
+  deploy|build)
+    cmake --build "$BUILD_DIR" --target deploy
+    ;;
+  clean)
+    cmake --build "$BUILD_DIR" --target clean
+    ;;
+  debugserver)
+    cmake --build "$BUILD_DIR" --target debugserver
+    ;;
+  configure|cmake)
+    cmake -S . -B "$BUILD_DIR" -G Ninja -DCMAKE_TOOLCHAIN_FILE="$ROOT/arm-gcc-toolchain.cmake" -DTARGET_NAME=firmware
+    ;;
+  *)
+    echo "Usage: ./do {configure|deploy|clean|debugserver}"
+    echo "Optional: BUILD_DIR=build-debug ./do deploy"
+    exit 1
+    ;;
+esac

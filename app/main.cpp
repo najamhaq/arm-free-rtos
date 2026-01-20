@@ -27,6 +27,7 @@ extern "C" int main(void) {
     vTaskStartScheduler();
 
     // If we get here, scheduler failed (heap/stack)
-    for (;;)
-        __asm volatile ("nop");
+    for (;;) {
+      __asm volatile ("nop");
+    }
 }
