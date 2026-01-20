@@ -16,30 +16,24 @@ volatile rtos_trap_reason_t g_rtos_trap_reason = RTOS_TRAP_NONE;
 volatile const char* g_rtos_trap_file = 0;
 volatile int g_rtos_trap_line = 0;
 
-static void rtos_trap(rtos_trap_reason_t reason)
-{
+static void rtos_trap(rtos_trap_reason_t reason) {
   g_rtos_trap_reason = reason;
   taskDISABLE_INTERRUPTS();
-  for (;;)
-  {
+  for (;;) {
     /* Optional: place a breakpoint here */
-    __asm volatile ("nop");
+    __asm volatile("nop");
   }
 }
 
-void vApplicationMallocFailedHook(void)
-{
-  rtos_trap(RTOS_TRAP_MALLOC_FAILED);
-}
+void vApplicationMallocFailedHook(void) { rtos_trap(RTOS_TRAP_MALLOC_FAILED); }
 
-void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName)
-{
-  (void)xTask; (void)pcTaskName;
+void vApplicationStackOverflowHook(TaskHandle_t xTask, char* pcTaskName) {
+  (void)xTask;
+  (void)pcTaskName;
   rtos_trap(RTOS_TRAP_STACK_OVERFLOW);
 }
 
-void vAssertCalled(const char *file, int line)
-{
+void vAssertCalled(const char* file, int line) {
   g_rtos_trap_file = file;
   g_rtos_trap_line = line;
   rtos_trap(RTOS_TRAP_ASSERT);

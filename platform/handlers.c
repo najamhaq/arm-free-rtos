@@ -6,13 +6,11 @@
 extern "C" {
 #endif
 
-  __attribute__((noreturn))
-  void DebugMon_Handler(void)
-  {
-    while (1) {
-      __asm volatile ("nop");
-    }
+__attribute__((noreturn)) void DebugMon_Handler(void) {
+  while (1) {
+    __asm volatile("nop");
   }
+}
 
 #ifdef __cplusplus
 }

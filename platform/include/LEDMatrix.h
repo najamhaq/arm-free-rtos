@@ -7,19 +7,10 @@
 #define MB2_FREERTOS_LEDMATRIC_H
 #include "mb2_board.h"
 
-
 // What Port 0 and Port 1 pins are used for the LED matrix?
-#define LED_P0_MASK ( \
-    (1u << 21) | \
-    (1u << 22) | \
-    (1u << 15) | \
-    (1u << 24) | \
-    (1u << 19) | \
-    (1u << 28) | \
-    (1u << 11) | \
-    (1u << 31) | \
-    (1u << 30)   \
-)
+#define LED_P0_MASK                                                                                \
+  ((1u << 21) | (1u << 22) | (1u << 15) | (1u << 24) | (1u << 19) | (1u << 28) | (1u << 11) |      \
+   (1u << 31) | (1u << 30))
 
 #define LED_P1_MASK (1u << 5)
 
@@ -31,18 +22,14 @@
  * Value define which GPIO pin it is connected to and on what port.
  */
 
-static const gpio_t col_pins[5] = {
-    {0, 28}, {0, 11}, {0, 31}, {1, 5}, {0, 30}
-};
-static const gpio_t row_pins[5] = {
-    {0, 21}, {0, 22}, {0, 15}, {0, 24}, {0, 19}
-};
+static const gpio_t col_pins[5] = {{0, 28}, {0, 11}, {0, 31}, {1, 5}, {0, 30}};
+static const gpio_t row_pins[5] = {{0, 21}, {0, 22}, {0, 15}, {0, 24}, {0, 19}};
 
 class LEDMatrix {
 public:
-//  static void setPixel(int x, int y, bool on);
-//  static void setAll(bool on);
-//   static void scanStep();    // called periodically (2ms)
+  //  static void setPixel(int x, int y, bool on);
+  //  static void setAll(bool on);
+  //   static void scanStep();    // called periodically (2ms)
 
   static void init() {
     // Configure row + columns as outputs
@@ -52,12 +39,12 @@ public:
     // turn off everything
     for (int i = 0; i < 5; i++) {
       set_high(col_pins[i]); // Default HIGH (OFF)
-      set_low(row_pins[i]); // Default LOW (OFF)
+      set_low(row_pins[i]);  // Default LOW (OFF)
     }
   }
 
   static void led_on(uint32_t row, uint32_t col) {
-    set_low(col_pins[col]); // Turn it ON
+    set_low(col_pins[col]);  // Turn it ON
     set_high(row_pins[row]); // Turn it ON
   }
   static void led_off(uint32_t row, uint32_t col) {
@@ -83,4 +70,4 @@ private:
   }
 };
 
-#endif //MB2_FREERTOS_LEDMATRIC_H
+#endif // MB2_FREERTOS_LEDMATRIC_H

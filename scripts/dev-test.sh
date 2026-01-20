@@ -8,3 +8,4 @@ BUILD_DIR="${BUILD_DIR:-build-host}"
 cmake -S . -B "$BUILD_DIR" -G Ninja
 cmake --build "$BUILD_DIR"
 ctest --test-dir "$BUILD_DIR" --output-on-failure
+

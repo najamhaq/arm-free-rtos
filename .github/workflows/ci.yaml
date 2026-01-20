@@ -10,20 +10,30 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
       - name: Install clang-format
         run: |
           sudo apt-get update
           sudo apt-get install -y clang-format
 
+      - name: Show clang-format version
+        run: clang-format --version
+
       - name: Check formatting
-        run: ./scripts/ci-check-format.sh
+        run: |
+          set -euxo pipefail
+          clang-format --version
+          bash ./scripts/ci-check-format.sh
 
   host_tests:
     name: Host unit tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
       - name: Install build tools
         run: |
@@ -31,4 +41,4 @@ jobs:
           sudo apt-get install -y cmake ninja-build gcc g++
 
       - name: Run host tests
-        run: ./scripts/dev-test.sh
+        run: bash ./scripts/dev-test.sh
