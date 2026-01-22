@@ -5,46 +5,54 @@
 #ifndef MICROBIT_FREERTOS_APP_BUTTOONDEBOUNCER_H
 #define MICROBIT_FREERTOS_APP_BUTTOONDEBOUNCER_H
 
-#include "cstdint"
-#include <array>
+#pragma once
 
-struct ButtonsRaw {
-  bool a;
-  bool b;
-};
-enum class InputEventType { A_Press, A_Release, B_Press, B_Release, A_None, B_None };
+#include "InputEvent.h"
+#include <cstdint>
 
-enum class states { STATE_0, STATE_1, STATE_2, STATE_3, STATE_4, STATE_5 };
-
-struct btn_state {
-  states state;
-  uint32_t time_ms;
-};
-
-struct InputEvent {
-  InputEventType type;
-  uint32_t t_ms;
-};
+// If you later want to keep the older A_Press/B_Press style,
+// you can always convert (ButtonId, Edge) -> InputEventType at the boundary.
 
 struct Events {
-  InputEvent* events[2];
-  int count;
+  InputEvent items[2];
+  uint8_t count{0};
+
+  void push(ButtonId btn, Edge e, uint32_t t_ms) {
+    if (count < 2) {
+      items[count++] = InputEvent{btn, e, t_ms};
+    }
+  }
+};
+
+enum class DebounceState : uint8_t {
+  Idle,            // stable up
+  PressDebounce,   // saw down edge, waiting for debounce
+  PressConfirmed,  // press confirmed (event emitted)
+  Held,            // still held down
+  ReleaseDebounce, // saw up edge, waiting for debounce
+  ReleaseConfirmed // release confirmed (event emitted)
+};
+
+struct ButtonTracker {
+  DebounceState state{DebounceState::Idle};
+  uint32_t last_transition_ms{0};
 };
 
 class Debouncer {
-private:
-  uint32_t debounce_delay;
-  btn_state a_state;
-  btn_state b_state;
-  uint32_t a_ms;
-  uint32_t b_ms;
-
 public:
   explicit Debouncer(uint32_t debounce_ms = 30);
 
-  // called at fixed tick intervals
-  Events update(ButtonsRaw raw, uint32_t now_ms);
-  InputEvent* getEvent(bool buttonDown, btn_state& btn_state, uint32_t now_ms);
+  // Called at fixed tick intervals. Returns up to 2 events (A/B).
+  Events update(ButtonsRaw raw, uint32_t event_time_ms);
+
+private:
+  // Advances one button's state machine and appends any event into 'out'.
+  void step(ButtonId id, bool is_down, ButtonTracker& button, uint32_t now_ms, Events& out);
+
+private:
+  uint32_t debounce_delay_ms{30};
+  ButtonTracker btnA;
+  ButtonTracker btnB;
 };
 
 #endif // MICROBIT_FREERTOS_APP_BUTTOONDEBOUNCER_H

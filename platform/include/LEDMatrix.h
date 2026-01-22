@@ -49,7 +49,7 @@ public:
   }
   static void led_off(uint32_t row, uint32_t col) {
     set_high(col_pins[col]); // Turn it OFF
-    set_high(row_pins[row]); // Turn it OFF
+    set_low(row_pins[row]);  // Turn it OFF
   }
 
 private:

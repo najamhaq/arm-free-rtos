@@ -91,11 +91,22 @@ if(BUILD_FIRMWARE)
             platform/handlers.c
             platform/LEDMatrix.cpp
             platform/mem.c
+            platform/Buttons.cpp
+            platform/include/Buttons.h
 
             # --- actual application ---
             app/main.cpp
+            app/include/AppQueues.h
+            app/AppQueues.cpp
+            app/ButtonTask.cpp
+            app/InputController.cpp
+            app/include/Lock.h
+            app/include/UILock.h
+            app/UILock.cpp
+
             modules/Debouncer.h
             modules/Debouncer.cpp
+            modules/InputEvent.h
 
             # --- Your RTOS integration ---
             rtos/hooks.c
