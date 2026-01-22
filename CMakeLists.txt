@@ -91,7 +91,11 @@ if(BUILD_FIRMWARE)
             platform/handlers.c
             platform/LEDMatrix.cpp
             platform/mem.c
+
+            # --- actual application ---
             app/main.cpp
+            modules/Debouncer.h
+            modules/Debouncer.cpp
 
             # --- Your RTOS integration ---
             rtos/hooks.c
@@ -110,10 +114,12 @@ if(BUILD_FIRMWARE)
     )
 
     target_include_directories(${ELF_TARGET} PRIVATE
+            ${CMAKE_CURRENT_SOURCE_DIR}
             include
             platform/include
             rtos/include
             app/include
+            modules
             third_party/freertos-kernel/include
             third_party/freertos-kernel/portable/GCC/ARM_CM4F
     )
@@ -199,6 +205,22 @@ if(BUILD_TESTS AND NOT CMAKE_CROSSCOMPILING)
 
     add_test(NAME unit_tests COMMAND unit_tests)
 
+    add_executable(button_test
+            tests/button_test.cpp
+            modules/Debouncer.h
+            modules/Debouncer.cpp
+    )
+    target_include_directories(button_test PRIVATE
+            include
+            modules
+            third_party/unity/src
+    )
+
+    target_link_libraries(button_test PRIVATE unity)
+    target_compile_options(button_test PRIVATE -g -O0)
+    target_compile_definitions(button_test PRIVATE UNIT_TESTING=1)
+    add_test(NAME button_test COMMAND button_test)
+    set_tests_properties(button_test PROPERTIES LABELS "unit;button")
 endif()
 
 # =====================================================================
