@@ -26,7 +26,7 @@ static void BlinkTask(void*) {
   }
 }
 
-void setup_rtos_objects() {
+void rtos_setup() {
   g_ledMutex = xSemaphoreCreateMutex();
   configASSERT(g_ledMutex != nullptr);
   g_inputQueue = xQueueCreate(/*length=*/16, /*item_size=*/sizeof(InputEvent));
@@ -42,18 +42,19 @@ void setup_rtos_objects() {
       xTaskCreate(InputController, "InputProc", 256, nullptr, tskIDLE_PRIORITY + 2, nullptr);
 
   configASSERT(ok2 == pdPASS);
+
+  ok2 = xTaskCreate(BlinkTask, "blink", 128, nullptr, 1, nullptr);
+  configASSERT(ok2 == pdPASS);
 }
 
-void setup() {
+void hardware_setup() {
   LEDMatrix::init();
   buttons_init();
-  setup_rtos_objects();
 }
 
 extern "C" int main(void) {
-  setup();
-  xTaskCreate(BlinkTask, "blink", 128, nullptr, 1, nullptr);
-  //  xTaskCreate(ButtonTask, "button", 128, nullptr, 1, nullptr);
+  hardware_setup();
+  rtos_setup();
   vTaskStartScheduler();
 
   // If we get here, scheduler failed (heap/stack)
