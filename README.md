@@ -173,12 +173,15 @@ ctest --test-dir build-host --output-on-failure
 │   ├── dev-test.sh
 │   ├── dev-format.sh
 │   └── ci-check-format.sh
-├── platform/
-│   ├── startup.s
-│   ├── linker.ld
-├── rtos/
-├── app/
-│   └── main.cpp
+├── src/
+    ├── app/
+    │   └── main.cpp
+    ├── drivers/        # Hardware drivers (buttons, LED matrix, UART, etc.)
+    ├── modules/        # Pure logic modules (hardware-independent) testable on host
+    ├── platform/       # Platform-specific code (SoC, registers, pin mapping)
+    │   ├── startup.s
+    │   ├── linker.ld
+    └── rtos/           # RTOS integration and configuration
 ├── tests/
 ├── third_party/
 │   └── unity/

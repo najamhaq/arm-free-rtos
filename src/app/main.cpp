@@ -1,15 +1,15 @@
 extern "C" {
 #include "FreeRTOS.h"
-#include "mb2_board.h"
+#include "microbit_ver_2.h"
 #include "task.h"
 }
 
-#include "AppQueues.h"
-#include "Buttons.h"
-#include "Debouncer.h"
-#include "LEDMatrix.h"
-#include "Lock.h"
-#include "UILock.h"
+#include "app_queues.h"
+#include "button.h"
+#include "debouncer.h"
+#include "led_matrix.h"
+#include "lock.h"
+#include "ui_lock.h"
 
 // forward declare task entry (C linkage if needed)
 extern "C" void ButtonTask(void*);

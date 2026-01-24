@@ -6,9 +6,9 @@
 #include "queue.h"
 #include "task.h"
 
-#include "Buttons.h"
-#include "Debouncer.h"
-#include "app/include/AppQueues.h"
+#include "app_queues.h"
+#include "debouncer.h"
+#include "button.h"
 
 static uint32_t now_ms() {
   // FreeRTOS tick count → milliseconds

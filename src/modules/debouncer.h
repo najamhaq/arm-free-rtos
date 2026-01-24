@@ -7,19 +7,17 @@
 
 #pragma once
 
-#include "InputEvent.h"
+#include "button.h"
+#include "input_type.h"
 #include <cstdint>
-
-// If you later want to keep the older A_Press/B_Press style,
-// you can always convert (ButtonId, Edge) -> InputEventType at the boundary.
 
 struct Events {
   InputEvent items[2];
   uint8_t count{0};
 
-  void push(ButtonId btn, Edge e, uint32_t t_ms) {
+  void push(ButtonId btn, Edge e, uint32_t currentTimeMilliSec) {
     if (count < 2) {
-      items[count++] = InputEvent{btn, e, t_ms};
+      items[count++] = InputEvent{btn, e, currentTimeMilliSec};
     }
   }
 };
@@ -40,19 +38,20 @@ struct ButtonTracker {
 
 class Debouncer {
 public:
-  explicit Debouncer(uint32_t debounce_ms = 30);
+  explicit Debouncer(uint32_t debounceDelayInMilliSec = 30);
 
   // Called at fixed tick intervals. Returns up to 2 events (A/B).
-  Events update(ButtonsRaw raw, uint32_t event_time_ms);
+  Events update(ButtonsRaw raw, uint32_t eventTimeMilliSec);
 
 private:
   // Advances one button's state machine and appends any event into 'out'.
-  void step(ButtonId id, bool is_down, ButtonTracker& button, uint32_t now_ms, Events& out);
+  void step(ButtonId id, bool isDown, ButtonTracker& button, uint32_t eventTimeMilliSec,
+            Events& out) const;
 
 private:
-  uint32_t debounce_delay_ms{30};
-  ButtonTracker btnA;
-  ButtonTracker btnB;
+  uint32_t debounceDelayMilliSec{30};
+  ButtonTracker buttonA;
+  ButtonTracker buttonB;
 };
 
 #endif // MICROBIT_FREERTOS_APP_BUTTOONDEBOUNCER_H

@@ -22,6 +22,7 @@ set(MB2_CPU_FLAGS
         -mfpu=fpv4-sp-d16
         -mfloat-abi=hard
 )
+set(SRC_DIR ${CMAKE_SOURCE_DIR}/src)
 
 function(mb2_apply_firmware_flags tgt)
     target_compile_options(${tgt} PRIVATE
@@ -47,7 +48,7 @@ function(mb2_apply_firmware_flags tgt)
             -nostdlib
             -Wl,--gc-sections
             -Wl,-Map=${CMAKE_BINARY_DIR}/${TARGET_NAME}.map
-            -T ${CMAKE_SOURCE_DIR}/platform/linker.ld
+            -T ${SRC_DIR}/platform/linker.ld
 
             # Release ELF is stripped (keeps Debug ELF debuggable)
             $<$<CONFIG:Release>:-Wl,--strip-debug>
@@ -86,31 +87,30 @@ add_custom_target(format-check
 if(BUILD_FIRMWARE)
 
     add_executable(${ELF_TARGET}
-            platform/startup.s
-            platform/linker.ld
-            platform/handlers.c
-            platform/LEDMatrix.cpp
-            platform/mem.c
-            platform/Buttons.cpp
-            platform/include/Buttons.h
+            ${SRC_DIR}/platform/startup.s
+            ${SRC_DIR}/platform/linker.ld
+            ${SRC_DIR}/platform/handlers.c
+            ${SRC_DIR}/platform/led_matrix.cpp
+            ${SRC_DIR}/platform/mem.c
+            ${SRC_DIR}/platform/button.cpp
+            ${SRC_DIR}/drivers/include/button.h
 
             # --- actual application ---
-            app/main.cpp
-            app/include/AppQueues.h
-            app/AppQueues.cpp
-            app/ButtonTask.cpp
-            app/InputController.cpp
-            app/include/Lock.h
-            app/include/UILock.h
-            app/UILock.cpp
+            ${SRC_DIR}/app/main.cpp
+            ${SRC_DIR}/app/include/app_queues.h
+            ${SRC_DIR}/app/app_queues.cpp
+            ${SRC_DIR}/app/button_task.cpp
+            ${SRC_DIR}/app/input_controller.cpp
+            ${SRC_DIR}/app/include/lock.h
+            ${SRC_DIR}/app/include/ui_lock.h
+            ${SRC_DIR}/app/ui_lock.cpp
 
-            modules/Debouncer.h
-            modules/Debouncer.cpp
-            modules/InputEvent.h
+            ${SRC_DIR}/modules/debouncer.h
+            ${SRC_DIR}/modules/debouncer.cpp
 
             # --- Your RTOS integration ---
-            rtos/hooks.c
-            rtos/heap_4.c
+            ${SRC_DIR}/rtos/hooks.c
+            ${SRC_DIR}/rtos/heap_4.c
 
             # --- FreeRTOS Kernel (from submodule) ---
             third_party/freertos-kernel/list.c
@@ -122,15 +122,19 @@ if(BUILD_FIRMWARE)
 
             # --- Cortex-M4F port ---
             third_party/freertos-kernel/portable/GCC/ARM_CM4F/port.c
+            src/include/input_type.h
+            src/drivers/button.cpp
+            src/platform/include/button_hw.h
     )
 
     target_include_directories(${ELF_TARGET} PRIVATE
             ${CMAKE_CURRENT_SOURCE_DIR}
-            include
-            platform/include
-            rtos/include
-            app/include
-            modules
+            ${SRC_DIR}/include
+            ${SRC_DIR}/platform/include
+            ${SRC_DIR}/rtos/include
+            ${SRC_DIR}/app/include
+            ${SRC_DIR}/drivers/include
+            ${SRC_DIR}/modules
             third_party/freertos-kernel/include
             third_party/freertos-kernel/portable/GCC/ARM_CM4F
     )
@@ -197,18 +201,10 @@ if(BUILD_TESTS AND NOT CMAKE_CROSSCOMPILING)
     add_library(unity
             third_party/unity/src/unity.c
     )
-    target_include_directories(unity PUBLIC
-            third_party/unity/src
-    )
-
     add_executable(unit_tests
             tests/test_main.c
     )
 
-    target_include_directories(unit_tests PRIVATE
-            include
-            third_party/unity/src
-    )
 
     target_link_libraries(unit_tests PRIVATE unity)
     target_compile_options(unit_tests PRIVATE -g -O0)
@@ -218,12 +214,19 @@ if(BUILD_TESTS AND NOT CMAKE_CROSSCOMPILING)
 
     add_executable(button_test
             tests/button_test.cpp
-            modules/Debouncer.h
-            modules/Debouncer.cpp
+            ${SRC_DIR}/modules/debouncer.h
+            ${SRC_DIR}/modules/debouncer.cpp
     )
     target_include_directories(button_test PRIVATE
-            include
-            modules
+            ${SRC_DIR}/include
+            ${SRC_DIR}/modules
+            ${SRC_DIR}/drivers/include
+            third_party/unity/src
+    )
+    target_include_directories(unit_tests PRIVATE
+            ${SRC_DIR}/include
+            ${SRC_DIR}/modules
+            ${SRC_DIR}/drivers/include
             third_party/unity/src
     )
 
@@ -240,7 +243,7 @@ endif()
 if(BUILD_TESTS_ARM_COMPILE_ONLY AND CMAKE_CROSSCOMPILING)
 
     add_library(unity_arm_obj OBJECT
-            third_party/unity/src/unity.c
+            third_party/unity/${SRC_DIR}/unity.c
     )
     target_include_directories(unity_arm_obj PUBLIC
             third_party/unity/src

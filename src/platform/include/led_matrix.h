@@ -5,7 +5,7 @@
 
 #ifndef MB2_FREERTOS_LEDMATRIC_H
 #define MB2_FREERTOS_LEDMATRIC_H
-#include "mb2_board.h"
+#include "microbit_ver_2.h"
 
 // What Port 0 and Port 1 pins are used for the LED matrix?
 #define LED_P0_MASK                                                                                \

@@ -6,11 +6,11 @@
 #include "queue.h"
 #include "task.h"
 
-#include "LEDMatrix.h"
-#include "Lock.h"
-#include "UILock.h"
-#include "app/include/AppQueues.h"
-#include "modules/InputEvent.h"
+#include "app_queues.h"
+#include "led_matrix.h"
+#include "lock.h"
+#include "debouncer.h"
+#include "ui_lock.h"
 
 static void onA() {
   Lock lk(g_ledMutex);
