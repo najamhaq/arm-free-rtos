@@ -1,5 +1,5 @@
 //
-// Created by mnajm on 2026-01-19.
+// Created by najamhaq  on 2026-01-19.
 //
 // @formatter:on
 
@@ -34,8 +34,8 @@ public:
   static void init() {
     // Configure row + columns as outputs
     // make sure we dont set anything else as output by accident and only set LED matrix pins
-    P0_DIRSET = LED_P0_MASK; // All GPIO on Port 0 as outputs
-    P1_DIRSET = LED_P1_MASK; // Port 1: make P1.05 an output
+    NRF_P0->DIRSET = LED_P0_MASK; // All GPIO on Port 0 as outputs
+    NRF_P1->DIRSET = LED_P1_MASK; // Port 1: make P1.05 an output
     // turn off everything
     for (int i = 0; i < 5; i++) {
       set_high(col_pins[i]); // Default HIGH (OFF)
@@ -55,18 +55,18 @@ public:
 private:
   static void set_high(gpio_t gpio) {
     if (gpio.port == 0) {
-      P0_OUTSET = BIT(gpio.pin);
+      NRF_P0->OUTSET = BIT(gpio.pin);
       return;
     }
-    P1_OUTSET = BIT(gpio.pin);
+    NRF_P1->OUTSET = BIT(gpio.pin);
   }
 
   static void set_low(gpio_t gpio) {
     if (gpio.port == 0) {
-      P0_OUTCLR = BIT(gpio.pin);
+      NRF_P0->OUTCLR = BIT(gpio.pin);
       return;
     }
-    P1_OUTCLR = BIT(gpio.pin);
+    NRF_P1->OUTCLR = BIT(gpio.pin);
   }
 };
 

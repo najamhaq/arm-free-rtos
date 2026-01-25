@@ -125,6 +125,11 @@ if(BUILD_FIRMWARE)
             src/include/input_type.h
             src/drivers/button.cpp
             src/platform/include/button_hw.h
+            src/drivers/uart.cpp
+            src/app/logger.cpp
+            src/platform/uart_hw.cpp
+            src/drivers/include/Uart.h
+            src/platform/include/uart_hw.h
     )
 
     target_include_directories(${ELF_TARGET} PRIVATE
@@ -137,6 +142,12 @@ if(BUILD_FIRMWARE)
             ${SRC_DIR}/modules
             third_party/freertos-kernel/include
             third_party/freertos-kernel/portable/GCC/ARM_CM4F
+            third_party/hal_nordic/nrfx/mdk
+            third_party/CMSIS_5/CMSIS/Core/Include
+    )
+
+    target_compile_definitions(${ELF_TARGET} PRIVATE
+            NRF52833_XXAA
     )
 
     mb2_apply_firmware_flags(${ELF_TARGET})

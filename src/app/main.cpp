@@ -9,7 +9,10 @@ extern "C" {
 #include "debouncer.h"
 #include "led_matrix.h"
 #include "lock.h"
+#include "uart.h"
 #include "ui_lock.h"
+
+static Uart uart;
 
 // forward declare task entry (C linkage if needed)
 extern "C" void ButtonTask(void*);
@@ -23,6 +26,15 @@ static void BlinkTask(void*) {
     LEDMatrix::led_on(3, 3);
     vTaskDelay(pdMS_TO_TICKS(500));
     LEDMatrix::led_off(3, 3);
+  }
+}
+
+void UartTask(void*) {
+  uart.write("UART task started\r\n");
+
+  for (;;) {
+    uart.write("heartbeat\r\n");
+    vTaskDelay(pdMS_TO_TICKS(1000));
   }
 }
 
@@ -50,6 +62,7 @@ void rtos_setup() {
 void hardware_setup() {
   LEDMatrix::init();
   buttons_init();
+  uart.init(UARTE_BAUDRATE_BAUDRATE_Baud115200);
 }
 
 extern "C" int main(void) {
@@ -57,6 +70,8 @@ extern "C" int main(void) {
   rtos_setup();
   vTaskStartScheduler();
 
+  xTaskCreate(UartTask, "uart", 256, nullptr, 1, nullptr);
+  vTaskStartScheduler();
   // If we get here, scheduler failed (heap/stack)
   for (;;) {
     __asm volatile("nop");
