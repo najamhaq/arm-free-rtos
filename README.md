@@ -101,6 +101,11 @@ safety-critical and resource-constrained systems.
   - Added as a **git submodule** under `third_party/unity`
   - Used for fast, deterministic **host-based unit testing** of embedded logic
 
+### Submodule Dependency
+
+This project uses ARM CMSIS and Nordic device headers for register definitions.
+No vendor SDKs or HAL frameworks are used.
+
 ---
 
 ## Initial Setup
@@ -184,7 +189,10 @@ ctest --test-dir build-host --output-on-failure
     └── rtos/           # RTOS integration and configuration
 ├── tests/
 ├── third_party/
-│   └── unity/
+    ├── unity              # Unit testing framework (host tests)
+    ├── freertos-kernel    # RTOS kernel
+    ├── hal_nordic         # Nordic device headers (nRF52833 registers)
+    └── CMSIS_5            # ARM CMSIS core (Cortex-M4)
 └── README.md
 ```
 
