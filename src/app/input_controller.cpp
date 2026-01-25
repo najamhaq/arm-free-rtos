@@ -7,9 +7,10 @@
 #include "task.h"
 
 #include "app_queues.h"
+#include "debouncer.h"
 #include "led_matrix.h"
 #include "lock.h"
-#include "debouncer.h"
+#include "logger.h"
 #include "ui_lock.h"
 
 static void onA() {
@@ -33,10 +34,13 @@ extern "C" void InputController(void*) {
       // update current down-state
       switch (e.edge) {
       case Edge::Press:
-        if (e.button == ButtonId::A)
+        if (e.button == ButtonId::A) {
+          log_write_n("Button A Pressed\r\n", 19);
           onA();
-        else if (e.button == ButtonId::B)
+        } else if (e.button == ButtonId::B) {
+          log_write_n("Button B Pressed\r\n", 19);
           onB();
+        }
         break;
 
       case Edge::Release:

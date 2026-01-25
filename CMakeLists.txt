@@ -130,6 +130,7 @@ if(BUILD_FIRMWARE)
             src/platform/uart_hw.cpp
             src/drivers/include/Uart.h
             src/platform/include/uart_hw.h
+            src/app/include/logger.h
     )
 
     target_include_directories(${ELF_TARGET} PRIVATE

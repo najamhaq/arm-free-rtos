@@ -28,7 +28,7 @@
 #define configSUPPORT_STATIC_ALLOCATION 0
 #define configSUPPORT_DYNAMIC_ALLOCATION 1
 
-/* You MUST match this to your actual CPU clock. nRF52833 runs at 64MHz when HFCLK is enabled. */
+/* We MUST match this to your actual CPU clock. nRF52833 runs at 64MHz when HFCLK is enabled. */
 #define configCPU_CLOCK_HZ ((uint32_t)64000000)
 
 /* -----------------------------------------------------------
@@ -59,8 +59,8 @@
 
 /* -----------------------------------------------------------
  * Interrupt priority configuration (Cortex-M specific)
- * nRF52 implements 3 priority bits (0-7). If you later include CMSIS,
- * you can replace this with:  #define configPRIO_BITS __NVIC_PRIO_BITS
+ * nRF52 implements 3 priority bits (0-7). If we later include CMSIS,
+ * we can replace this with:  #define configPRIO_BITS __NVIC_PRIO_BITS
  * ----------------------------------------------------------- */
 #ifndef configPRIO_BITS
 #define configPRIO_BITS 3 /* 3 bits for nRF52 */

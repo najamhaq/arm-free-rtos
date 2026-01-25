@@ -11,12 +11,14 @@
 #define MB2_BTN_A_PIN 14u
 #define MB2_BTN_B_PIN 23u
 
-#define MB2_UART_TX_PIN 6u
-#define MB2_UART_RX_PIN 8u
+#define NRF_PIN(port, pin) (((port) << 5) | (pin))
+
+#define MB2_UART_TX_PIN NRF_PIN(0, 6) // P0.06
+#define MB2_UART_RX_PIN NRF_PIN(1, 8) // P1.08
 
 static inline uint32_t BIT(uint32_t pin) { return (1u << (pin)); }
 
-// Some pins are not one the sam eport. Define a struct to represent a GPIO pin.
+// Some pins are not one the same port. Define a struct to represent a GPIO pin.
 typedef struct {
   uint8_t port; // 0 or 1
   uint8_t pin;  // 0..31 (port0) or 0..15 (port1)

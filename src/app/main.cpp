@@ -9,6 +9,8 @@ extern "C" {
 #include "debouncer.h"
 #include "led_matrix.h"
 #include "lock.h"
+#include "logger.h"
+#include "nrf.h"
 #include "uart.h"
 #include "ui_lock.h"
 
@@ -29,12 +31,12 @@ static void BlinkTask(void*) {
   }
 }
 
-void UartTask(void*) {
+void HeartbeatTask(void*) {
   uart.write("UART task started\r\n");
 
   for (;;) {
     uart.write("heartbeat\r\n");
-    vTaskDelay(pdMS_TO_TICKS(1000));
+    vTaskDelay(pdMS_TO_TICKS(2000));
   }
 }
 
@@ -64,13 +66,15 @@ void hardware_setup() {
   buttons_init();
   uart.init(UARTE_BAUDRATE_BAUDRATE_Baud115200);
 }
+void logger_setup() {
+  logger_init();
+  xTaskCreate(HeartbeatTask, "heartbeat", 256, nullptr, 1, nullptr);
+}
 
 extern "C" int main(void) {
   hardware_setup();
   rtos_setup();
-  vTaskStartScheduler();
-
-  xTaskCreate(UartTask, "uart", 256, nullptr, 1, nullptr);
+  logger_setup();
   vTaskStartScheduler();
   // If we get here, scheduler failed (heap/stack)
   for (;;) {

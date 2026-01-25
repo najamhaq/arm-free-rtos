@@ -7,8 +7,8 @@
 #include "task.h"
 
 #include "app_queues.h"
-#include "debouncer.h"
 #include "button.h"
+#include "debouncer.h"
 
 static uint32_t now_ms() {
   // FreeRTOS tick count → milliseconds
@@ -30,7 +30,7 @@ extern "C" void ButtonTask(void* /*arg*/) {
 
     for (int i = 0; i < events.count; i++) {
       InputEvent e = events.items[i];
-      // Non-blocking send; change to a small timeout if you prefer reliability
+      // Non-blocking send; change to a small timeout if we prefer reliability
       (void)xQueueSend(g_inputQueue, &e, 0);
     }
 

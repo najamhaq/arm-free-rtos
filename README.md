@@ -64,6 +64,37 @@ All development targets the MCU directly — no vendor SDK abstractions.
 
 ---
 
+## Expected Behavior
+
+After flashing the firmware to a micro:bit v2:
+
+- The system boots and initializes the nRF52833 and FreeRTOS scheduler
+- UART output is available over the micro:bit USB connection (DAPLink CDC)
+
+### Buttons
+- **Button A**
+    - Generates a button press event
+    - Logs `Button A Pressed` over UART
+    - Triggers the application-defined `onA()` handler
+
+- **Button B**
+    - Generates a button press event
+    - Logs `Button B Pressed` over UART
+    - Triggers the application-defined `onB()` handler
+
+### UART Output
+- UART is configured using the nRF52833 UARTE peripheral
+- Output is visible via the micro:bit USB virtual COM port
+- Logging is non-blocking and handled by a dedicated UART TX task
+
+Typical output:
+```bash
+BOOT OK
+heartbeat
+Button A Pressed
+Button B Pressed
+```
+
 ## Design Philosophy
 
 ### Bare-Metal First, RTOS Second
@@ -76,6 +107,22 @@ The project starts **without an RTOS** and introduces FreeRTOS only after:
 
 This mirrors how **production firmware teams** introduce RTOSes in
 safety-critical and resource-constrained systems.
+
+## UART Bring-up & Logging
+
+Features:
+- Verified UART TX over DAPLink CDC (virtual COM port)
+- Explicit pin mapping for micro:bit v2 (P0.06 / P1.08)
+- UART initialized with correct scheduler ordering
+- Dedicated UART TX task for serialized output
+- Non-blocking logging API usable from application tasks
+-
+- UARTE bring-up on nRF52833 verified over DAPLink CDC (COM port)
+- micro:bit v2 UART pin mapping:
+    - TXD: P0.06
+    - RXD: P1.08
+- FreeRTOS logging via a dedicated UART TX task and queue (serialized output)
+
 
 ---
 
@@ -101,10 +148,22 @@ safety-critical and resource-constrained systems.
   - Added as a **git submodule** under `third_party/unity`
   - Used for fast, deterministic **host-based unit testing** of embedded logic
 
-### Submodule Dependency
+## Dependencies
 
-This project uses ARM CMSIS and Nordic device headers for register definitions.
-No vendor SDKs or HAL frameworks are used.
+This repo uses git submodules for third-party dependencies:
+
+- ARM CMSIS_5: `third_party/CMSIS_5` (5.9.0-dev-178-g55b19837f)
+- FreeRTOS kernel-only: `third_party/freertos-kernel` (V10.4.0-kernel-only-801-g67f59a5f5)
+- Nordic HAL (device headers): `third_party/hal_nordic` (v1.3.0-rc1-3-g8f013ea)
+- Unity test framework: `third_party/unity` (v2.6.1-48-g51d2db9)
+
+Clone with submodules:
+
+```bash
+git clone --recurse-submodules <repo>
+```
+
+scritps/dev have command that will set you correctly anyway.
 
 ---
 
@@ -206,6 +265,7 @@ ctest --test-dir build-host --output-on-failure
 - ISR-safe queues and notifications
 - Deterministic task scheduling
 - Host-based unit testing for embedded code
+- UART based logging
 - Professional CMake-based firmware workflows
 
 ---
